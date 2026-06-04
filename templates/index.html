@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BriefOS — Incident Brief Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">BriefOS</div>
+            <p class="tagline">Paste your incident notes. Get an executive brief.</p>
+        </header>
+
+        {% if error %}
+        <div class="error-banner">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="/generate">
+            <div class="field">
+                <label for="incident_notes">Incident notes</label>
+                <textarea
+                    id="incident_notes"
+                    name="incident_notes"
+                    rows="16"
+                    placeholder="Paste your raw incident notes here — bullet points, timestamps, stream of consciousness, anything...
+
+Example:
+- 09:14 helpdesk flagged weird login attempts on finance system
+- came from eastern europe IPs
+- user Janet confirm she didnt log in
+- IT pulled logs, looks like credential stuffing
+- maybe 3 accounts affected
+- finance director been notified, not happy
+- still checking if any data was accessed
+- havent told legal yet"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="org_name">Organisation <span class="optional">(optional)</span></label>
+                    <input type="text" id="org_name" name="org_name" placeholder="e.g. Acme Ltd">
+                </div>
+                <div class="field">
+                    <label for="incident_type">Incident type <span class="optional">(optional)</span></label>
+                    <input type="text" id="incident_type" name="incident_type" placeholder="e.g. ransomware, data breach, phishing">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Generate Brief →</button>
+        </form>
+
+        <footer>
+            <p>⚠ BriefOS generates AI-assisted incident briefs. Always verify content before sharing with executives or stakeholders.</p>
+        </footer>
+    </div>
+</body>
+</html>

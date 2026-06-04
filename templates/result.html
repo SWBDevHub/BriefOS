@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BriefOS — {{ result.incident_title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">BriefOS</div>
+            <p class="tagline">Incident Brief</p>
+        </header>
+
+        <!-- Incident banner -->
+        <div class="incident-banner severity-{{ result.severity }}">
+            <div class="banner-left">
+                <div class="severity-label">Severity</div>
+                <div class="severity-value">{{ result.severity }}</div>
+            </div>
+            <div class="banner-mid">
+                <div class="incident-title">{{ result.incident_title }}</div>
+                <div class="status-badge status-{{ result.status | replace(' ', '-') | lower }}">{{ result.status }}</div>
+            </div>
+            <div class="banner-right">
+                <div class="severity-label">Generated</div>
+                <div class="generated-time" id="gen-time"></div>
+            </div>
+        </div>
+
+        <!-- Executive summary -->
+        <div class="card">
+            <div class="card-title">Executive Summary</div>
+            <p class="summary-text">{{ result.executive_summary }}</p>
+        </div>
+
+        <!-- Two column -->
+        <div class="grid-2">
+            <!-- Timeline -->
+            <div class="card">
+                <div class="card-title">Timeline</div>
+                {% if result.timeline %}
+                <div class="timeline">
+                    {% for event in result.timeline %}
+                    <div class="timeline-row">
+                        <div class="timeline-time">{{ event.time }}</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-event">{{ event.event }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="muted">No timeline data available.</p>
+                {% endif %}
+            </div>
+
+            <!-- Business impact -->
+            <div class="card">
+                <div class="card-title">Business Impact</div>
+                {% if result.business_impact %}
+                <div class="impact-grid">
+                    <div class="impact-row">
+                        <span class="impact-key">Operational</span>
+                        <span class="impact-val">{{ result.business_impact.operational or '—' }}</span>
+                    </div>
+                    <div class="impact-row">
+                        <span class="impact-key">Financial</span>
+                        <span class="impact-val">{{ result.business_impact.financial or '—' }}</span>
+                    </div>
+                    <div class="impact-row">
+                        <span class="impact-key">Reputational</span>
+                        <span class="impact-val">{{ result.business_impact.reputational or '—' }}</span>
+                    </div>
+                    <div class="impact-row">
+                        <span class="impact-key">Regulatory</span>
+                        <span class="impact-val">{{ result.business_impact.regulatory or '—' }}</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Technical summary + affected systems -->
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Technical Summary</div>
+                <p class="summary-text">{{ result.technical_summary }}</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Affected Systems</div>
+                {% if result.affected_systems %}
+                <ul class="plain-list">
+                    {% for item in result.affected_systems %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="muted">No systems identified.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Actions taken -->
+        <div class="card">
+            <div class="card-title">Actions Taken</div>
+            {% if result.actions_taken %}
+            <ul class="plain-list">
+                {% for action in result.actions_taken %}
+                <li>{{ action }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="muted">No actions recorded.</p>
+            {% endif %}
+        </div>
+
+        <!-- Next actions -->
+        <div class="card">
+            <div class="card-title">Next Actions</div>
+            {% if result.next_actions %}
+            <div class="actions-table">
+                <div class="actions-header">
+                    <span>Action</span>
+                    <span>Owner</span>
+                    <span>Priority</span>
+                </div>
+                {% for item in result.next_actions %}
+                <div class="actions-row">
+                    <span>{{ item.action }}</span>
+                    <span class="owner-tag">{{ item.owner }}</span>
+                    <span class="priority-tag priority-{{ item.priority | replace(' ', '-') | lower }}">{{ item.priority }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Escalation + lessons -->
+        <div class="grid-2">
+            <div class="card escalation-card">
+                <div class="card-title">Escalation Recommendation</div>
+                <p>{{ result.escalation_recommendation }}</p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Early Lessons</div>
+                {% if result.lessons_learned %}
+                <ul class="plain-list muted-list">
+                    {% for lesson in result.lessons_learned %}
+                    <li>{{ lesson }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="muted">No lessons identified yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="actions-row">
+            <a href="/" class="btn-primary">Generate another brief →</a>
+        </div>
+
+        <footer>
+            <p>⚠ BriefOS generates AI-assisted incident briefs. Always verify content before sharing with executives or stakeholders.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('gen-time').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
